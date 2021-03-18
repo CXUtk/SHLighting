@@ -8,6 +8,7 @@ static std::string spriteVertPath = "Resources/Shaders/sprite.vs";
 static std::string fontFragPath = "Resources/Shaders/font.frag";
 static std::string circleFragPath = "Resources/Shaders/circle.frag";
 static std::string lightFragPath = "Resources/Shaders/light.frag";
+static std::string lightCubeFragPath = "Resources/Shaders/lightCube.frag";
 
 ShaderManager::ShaderManager() {
     auto default2Shader = std::make_shared<ShaderData>(ShaderData::loadShaderProgram(defaultVert2Path, defaultFragPath));
@@ -30,6 +31,10 @@ ShaderManager::ShaderManager() {
 
     auto defaultTriangleShader = std::make_shared<ShaderData>(ShaderData::loadShaderProgram(defaultVert4Path, defaultFragPath));
     _shaders["triangle_draw"] = defaultTriangleShader;
+
+
+    auto triangleCubeShader = std::make_shared<ShaderData>(ShaderData::loadShaderProgram(defaultVert4Path, lightCubeFragPath));
+    _shaders["triangle_draw_cube"] = triangleCubeShader;
 }
 
 ShaderManager::~ShaderManager() {

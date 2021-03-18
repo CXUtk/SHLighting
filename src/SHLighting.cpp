@@ -11,6 +11,8 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 SHLighting::~SHLighting() {
+    glfwDestroyWindow(_window);
+    glfwTerminate();
 }
 
 void SHLighting::Init() {
@@ -27,6 +29,17 @@ void SHLighting::Init() {
     loader.load("Resources/Scenes/spot_triangulated_good.obj");
     auto mesh = loader.GetMesh();
     _drawTriangles = mesh.GetDrawTriangles();
+
+    std::vector<std::string> faces
+    {
+        "Resources/Textures/right.jpg",
+        "Resources/Textures/left.jpg",
+        "Resources/Textures/top.jpg",
+        "Resources/Textures/bottom.jpg",
+        "Resources/Textures/front.jpg",
+         "Resources/Textures/back.jpg"
+    };
+    _cubeTexture = std::make_shared<CubeTexture>(faces);
 }
 
 
@@ -90,8 +103,8 @@ void SHLighting::draw() {
 
         glDepthFunc(GL_LESS);
         auto dir = glm::normalize(glm::vec3(1, 1, 0));
-        _renderer->DrawLightedTriangles(_drawTriangles, glm::vec3(1), dir, _cameraControl->GetCamera()->GetEyePos());
-
+        // _renderer->DrawLightedTriangles(_drawTriangles, glm::vec3(1), dir, _cameraControl->GetCamera()->GetEyePos());
+        _renderer->DrawTrianglesCubemap(_drawTriangles, _cubeTexture);
 
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);

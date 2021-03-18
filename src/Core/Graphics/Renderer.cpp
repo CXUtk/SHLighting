@@ -2,6 +2,7 @@
 #include <SHLighting.h>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <Core/Textures/CubeTexture.h>
 
 static GLuint _vaoLine, _vboLine;
 static GLuint _vaoTriangle, _vboTriangle;
@@ -90,6 +91,39 @@ void Renderer::DrawTriangles(const std::vector<DrawTriangle>& triangles, const g
 
     int sz = triangles.size();
     glBindVertexArray(_vaoTriangle);
+    // 以 BUFFER_SIZE_T 个顶点为单位，分批绘制三角形
+    for (int i = 0; i < sz; i += BUFFER_SIZE_T / 3) {
+        glBindBuffer(GL_ARRAY_BUFFER, _vboTriangle);
+        int count = std::min(sz, i + BUFFER_SIZE_T / 3) - i;
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(DrawTriangle) * count, triangles.data() + i);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glDrawArrays(GL_TRIANGLES, 0, count * 3);
+    }
+
+    glBindVertexArray(0);
+}
+
+void Renderer::DrawTrianglesCubemap(const std::vector<DrawTriangle>& triangles, const std::shared_ptr<CubeTexture>& cubemap) {
+    auto model = glm::identity<glm::mat4>();
+
+
+    auto shader = _shaderManager->getShaderData("triangle_draw_cube");
+    shader->apply();
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"), 1, false, glm::value_ptr(_projectionMatrix * _viewMatrix));
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, false, glm::value_ptr(model));
+
+
+
+
+    glBindVertexArray(_vaoTriangle);
+
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap->GetID());
+    glUniform1i(glGetUniformLocation(shader->getID(), "cubemap"), 0);
+
+    int sz = triangles.size();
     // 以 BUFFER_SIZE_T 个顶点为单位，分批绘制三角形
     for (int i = 0; i < sz; i += BUFFER_SIZE_T / 3) {
         glBindBuffer(GL_ARRAY_BUFFER, _vboTriangle);

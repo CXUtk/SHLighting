@@ -5,6 +5,7 @@
 #include <Core/CameraController.h>
 #include <Core/Input/InputControl.h>
 #include <Core/UI/GUIManager.h>
+#include <Core/Textures/CubeTexture.h>
 #include <memory>
 
 class SHLighting {
@@ -31,9 +32,10 @@ private:
     std::shared_ptr<CameraController> _cameraControl;
     std::shared_ptr<InputContorl> _input;
     std::shared_ptr<GUIManager> _guiManager;
+    
 
+    std::shared_ptr<CubeTexture> _cubeTexture;
 
-    std::vector<DrawSegment> _drawWireFrames;
     std::vector<DrawTriangle> _drawTriangles;
 
     void update();
