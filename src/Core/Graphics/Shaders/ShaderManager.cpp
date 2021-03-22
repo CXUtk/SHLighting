@@ -10,6 +10,11 @@ static std::string circleFragPath = "Resources/Shaders/circle.frag";
 static std::string lightFragPath = "Resources/Shaders/light.frag";
 static std::string lightCubeFragPath = "Resources/Shaders/lightCube.frag";
 
+static std::string skyBoxFragPath = "Resources/Shaders/skybox.frag";
+static std::string skyBoxVertPath = "Resources/Shaders/skybox.vs";
+
+static std::string SHFragPath = "Resources/Shaders/SH.frag";
+
 ShaderManager::ShaderManager() {
     auto default2Shader = std::make_shared<ShaderData>(ShaderData::loadShaderProgram(defaultVert2Path, defaultFragPath));
     _shaders["line_draw"] = default2Shader;
@@ -35,6 +40,12 @@ ShaderManager::ShaderManager() {
 
     auto triangleCubeShader = std::make_shared<ShaderData>(ShaderData::loadShaderProgram(defaultVert4Path, lightCubeFragPath));
     _shaders["triangle_draw_cube"] = triangleCubeShader;
+
+    auto skyBoxShader = std::make_shared<ShaderData>(ShaderData::loadShaderProgram(skyBoxVertPath, skyBoxFragPath));
+    _shaders["skybox"] = skyBoxShader;
+
+    auto SHShader = std::make_shared<ShaderData>(ShaderData::loadShaderProgram(defaultVert4Path, SHFragPath));
+    _shaders["triangle_draw_SH"] = SHShader;
 }
 
 ShaderManager::~ShaderManager() {

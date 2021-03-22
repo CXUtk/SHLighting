@@ -37,6 +37,7 @@ private:
     std::shared_ptr<CubeTexture> _cubeTexture;
 
     std::vector<DrawTriangle> _drawTriangles;
+    std::vector<DrawTriangle> _drawTriangles2;
 
     void update();
     void draw();

@@ -51,5 +51,8 @@ add_custom_command(TARGET SHLighting PRE_BUILD
                        ${PROJECT_SOURCE_DIR}/Resources  ${PROJECT_BINARY_DIR}/Resources)
 
 
+project (SHSolver VERSION 1.0)
+# 将源代码添加到此项目的可执行文件。
+add_executable (SHSolver "${PROJECT_SOURCE_DIR}/SHSolver/SHSolver.cpp" "SHSolver/SHSampler.h" "SHSolver/SHSampler.cpp" "SHSolver/SHUtils.h")
 
 # TODO: 如有需要，请添加测试并安装目标。

@@ -8,8 +8,8 @@ public:
     Camera(glm::vec3 eyePos, float fov, float aspect, float zNear, float zFar);
     ~Camera() = default;
 
-    glm::mat4 getViewTransform() const;
-    glm::mat4 getProjectTransform() const;
+    glm::mat4 GetViewTransform() const;
+    glm::mat4 GetProjectTransform() const;
 
     void SetEyePos(glm::vec3 pos) { _eyePos = pos; }
     glm::vec3 GetEyePos() const { return _eyePos; }

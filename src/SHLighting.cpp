@@ -30,6 +30,10 @@ void SHLighting::Init() {
     auto mesh = loader.GetMesh();
     _drawTriangles = mesh.GetDrawTriangles();
 
+    loader.load("Resources/Scenes/cube.obj");
+    mesh = loader.GetMesh();
+    _drawTriangles2 = mesh.GetDrawTriangles();
+
     std::vector<std::string> faces
     {
         "Resources/Textures/right.jpg",
@@ -95,8 +99,9 @@ void SHLighting::update() {
 }
 
 void SHLighting::draw() {
-    _renderer->Begin(_cameraControl->GetCamera()->getProjectTransform(), _cameraControl->GetCamera()->getViewTransform());
+    _renderer->Begin(_cameraControl->GetCamera()->GetProjectTransform(), _cameraControl->GetCamera()->GetViewTransform());
     {
+        _renderer->DrawSkyBox(_drawTriangles2, _cubeTexture);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glFrontFace(GL_CCW);
@@ -104,8 +109,8 @@ void SHLighting::draw() {
         glDepthFunc(GL_LESS);
         auto dir = glm::normalize(glm::vec3(1, 1, 0));
         // _renderer->DrawLightedTriangles(_drawTriangles, glm::vec3(1), dir, _cameraControl->GetCamera()->GetEyePos());
-        _renderer->DrawTrianglesCubemap(_drawTriangles, _cubeTexture);
-
+        // _renderer->DrawTrianglesCubemap(_drawTriangles, _cubeTexture, _cameraControl->GetCamera()->GetEyePos());
+        _renderer->DrawTrianglesSH(_drawTriangles);
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
         //_renderer->drawLines(tEdges, glm::vec3(1, 0, 0), 2);

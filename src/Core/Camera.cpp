@@ -7,11 +7,11 @@ Camera::Camera(glm::vec3 eyePos, float fov, float aspect, float zNear, float zFa
     _right = glm::vec3(1, 0, 0);
 }
 
-glm::mat4 Camera::getViewTransform() const {
+glm::mat4 Camera::GetViewTransform() const {
     return glm::lookAt(_eyePos, _eyePos + _front, _up);
 }
 
-glm::mat4 Camera::getProjectTransform() const {
+glm::mat4 Camera::GetProjectTransform() const {
     return glm::perspective(_fov, _aspect, _zNear, _zFar);
 }
 

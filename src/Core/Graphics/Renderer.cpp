@@ -104,7 +104,7 @@ void Renderer::DrawTriangles(const std::vector<DrawTriangle>& triangles, const g
     glBindVertexArray(0);
 }
 
-void Renderer::DrawTrianglesCubemap(const std::vector<DrawTriangle>& triangles, const std::shared_ptr<CubeTexture>& cubemap) {
+void Renderer::DrawTrianglesCubemap(const std::vector<DrawTriangle>& triangles, const std::shared_ptr<CubeTexture>& cubemap, glm::vec3 viewPos) {
     auto model = glm::identity<glm::mat4>();
 
 
@@ -112,9 +112,7 @@ void Renderer::DrawTrianglesCubemap(const std::vector<DrawTriangle>& triangles, 
     shader->apply();
     glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"), 1, false, glm::value_ptr(_projectionMatrix * _viewMatrix));
     glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, false, glm::value_ptr(model));
-
-
-
+    glUniform3fv(glGetUniformLocation(shader->getID(), "viewPos"), 1, glm::value_ptr(viewPos));
 
     glBindVertexArray(_vaoTriangle);
 
@@ -140,6 +138,96 @@ void Renderer::DrawTrianglesCubemap(const std::vector<DrawTriangle>& triangles, 
 void Renderer::DrawCircles(const std::vector<DrawCircle>& circles, const glm::vec4& color) {
     std::vector<DrawTriangle> trianglesQuads;
 
+}
+
+void Renderer::DrawSkyBox(const std::vector<DrawTriangle>& triangles, const std::shared_ptr<CubeTexture>& cubemap) {
+    auto model = glm::identity<glm::mat4>();
+
+
+    auto shader = _shaderManager->getShaderData("skybox");
+    shader->apply();
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"), 1, false, glm::value_ptr(_projectionMatrix));
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "view"), 1, false, glm::value_ptr(_viewMatrix));
+
+    glBindVertexArray(_vaoTriangle);
+
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap->GetID());
+    glUniform1i(glGetUniformLocation(shader->getID(), "cubemap"), 0);
+
+    int sz = triangles.size();
+    // 以 BUFFER_SIZE_T 个顶点为单位，分批绘制三角形
+    for (int i = 0; i < sz; i += BUFFER_SIZE_T / 3) {
+        glBindBuffer(GL_ARRAY_BUFFER, _vboTriangle);
+        int count = std::min(sz, i + BUFFER_SIZE_T / 3) - i;
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(DrawTriangle) * count, triangles.data() + i);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glDrawArrays(GL_TRIANGLES, 0, count * 3);
+    }
+
+    glBindVertexArray(0);
+}
+
+void Renderer::DrawTrianglesSH(const std::vector<DrawTriangle>& triangles) {
+    auto model = glm::identity<glm::mat4>();
+
+    //glm::mat4 RMat = glm::mat4(0.009098, -0.004780, 0.024033, -0.014947,
+    //    -0.004780, -0.009098, -0.011258, 0.020210,
+    //    0.024033, -0.011258, -0.011570, -0.017383,
+    //    -0.014947, 0.020210, -0.017383, 0.073787);
+
+    //glm::mat4 GMat = glm::mat4(-0.002331, -0.002184, 0.009201, -0.002846,
+    //    -0.002184, 0.002331, -0.009611, 0.017903,
+    //    0.009201, -0.009611, -0.007038, -0.009331,
+    //    -0.002846, 0.017903, -0.009331, 0.041083);
+
+    //glm::mat4 BMat = glm::mat4(-0.013032, -0.005248, 0.005970, 0.000483,
+    //    -0.005248, 0.013032, -0.020370, 0.030949,
+    //    0.005970, -0.020370, -0.010948, -0.013784,
+    //    0.000483, 0.030949, -0.013784, 0.051648);
+
+    glm::mat4 RMat = glm::mat4(
+        0.002602, 0.000858, -0.002529, -0.001215,
+        0.000858, -0.002602, -0.002134, 0.006012,
+        -0.002529, -0.002134, 0.008727, -0.007814,
+        -0.001215, 0.006012, -0.007814, 0.030030
+        );
+    glm::mat4 GMat = glm::mat4(
+        0.003390, 0.000971, -0.001974, -0.002210,
+        0.000971, -0.003390, -0.001624, 0.008696,
+        -0.001974, -0.001624, 0.007176, -0.008548,
+        -0.002210, 0.008696, -0.008548, 0.041760
+        );
+    glm::mat4 BMat = glm::mat4(
+        0.002841, 0.000853, -0.001103, -0.002904,
+        0.000853, -0.002841, -0.000948, 0.013175,
+        -0.001103, -0.000948, 0.003537, -0.008186,
+        -0.002904, 0.013175, -0.008186, 0.054869
+        );
+    auto shader = _shaderManager->getShaderData("triangle_draw_SH");
+    shader->apply();
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"), 1, false, glm::value_ptr(_projectionMatrix * _viewMatrix));
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, false, glm::value_ptr(model));
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "RMat"), 1, false, glm::value_ptr(RMat));
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "GMat"), 1, false, glm::value_ptr(GMat));
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "BMat"), 1, false, glm::value_ptr(BMat));
+
+    glBindVertexArray(_vaoTriangle);
+
+
+    int sz = triangles.size();
+    // 以 BUFFER_SIZE_T 个顶点为单位，分批绘制三角形
+    for (int i = 0; i < sz; i += BUFFER_SIZE_T / 3) {
+        glBindBuffer(GL_ARRAY_BUFFER, _vboTriangle);
+        int count = std::min(sz, i + BUFFER_SIZE_T / 3) - i;
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(DrawTriangle) * count, triangles.data() + i);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDrawArrays(GL_TRIANGLES, 0, count * 3);
+    }
+
+    glBindVertexArray(0);
 }
 
 void Renderer::Begin(glm::mat4 projection, glm::mat4 view) {
