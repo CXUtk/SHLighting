@@ -87,7 +87,7 @@ float sinc(float x) {               /* Supporting sinc function */
 }
 
 void computeHDR() {
-    const char* file = "./Resources/HDR/test.png";
+    const char* file = "./Resources/HDR/grace_probe.hdr";
 
     int w, h, channel;
     auto data = stbi_loadf(file, &w, &h, &channel, 0);
@@ -153,7 +153,8 @@ void computeCube() {
 }
 
 int main(int argc, char** argv) {
-    computeCube();
+    computeHDR();
+    //computeCube();
     genMatrix();
     printf("glm::mat4 RMat = glm::mat4(\n");
     for (int i = 0; i < 4; i++) {

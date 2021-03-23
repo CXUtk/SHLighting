@@ -13,7 +13,7 @@ static std::string lightCubeFragPath = "Resources/Shaders/lightCube.frag";
 static std::string skyBoxFragPath = "Resources/Shaders/skybox.frag";
 static std::string skyBoxVertPath = "Resources/Shaders/skybox.vs";
 
-static std::string SHFragPath = "Resources/Shaders/SH.frag";
+static std::string SHFragPath = "Resources/Shaders/SH2.frag";
 
 ShaderManager::ShaderManager() {
     auto default2Shader = std::make_shared<ShaderData>(ShaderData::loadShaderProgram(defaultVert2Path, defaultFragPath));

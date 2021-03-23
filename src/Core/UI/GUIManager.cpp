@@ -29,6 +29,10 @@ void GUIManager::Begin() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
+    ImGui::Begin("Info");
+    ImGui::Text("FPS: %.lf\n", 1 / _elapsedTime);
+    ImGui::End();
 }
 
 void GUIManager::End() {

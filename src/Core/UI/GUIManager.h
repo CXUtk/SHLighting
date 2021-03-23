@@ -8,7 +8,7 @@
 
 class GUIManager {
 public:
-    GUIManager(GLFWwindow* window) : _window(window){}
+    GUIManager(GLFWwindow* window) : _window(window) { _elapsedTime = 1; }
     ~GUIManager();
 
     void Init();
@@ -16,6 +16,9 @@ public:
     void Begin();
     void End();
 
+    void SetElapsedTime(double t) { _elapsedTime = t; }
+
 private:
     GLFWwindow* _window;
+    double _elapsedTime;
 };

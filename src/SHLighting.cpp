@@ -26,7 +26,7 @@ void SHLighting::Init() {
 
 
     ObjLoader loader;
-    loader.load("Resources/Scenes/spot_triangulated_good.obj");
+    loader.load("Resources/Scenes/bunny.obj");
     auto mesh = loader.GetMesh();
     _drawTriangles = mesh.GetDrawTriangles();
 
@@ -73,7 +73,7 @@ SHLighting::SHLighting(int width, int height) :_width(width), _height(height), _
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    _window = glfwCreateWindow(width, height, "3D Mesh Editor", nullptr, nullptr);
+    _window = glfwCreateWindow(width, height, "SH Lighting", nullptr, nullptr);
     if (!_window) {
         fprintf(stderr, "Failed to create window\n");
         glfwTerminate();
@@ -94,7 +94,8 @@ SHLighting::SHLighting(int width, int height) :_width(width), _height(height), _
 void SHLighting::update() {
     _guiManager->Begin();
     _input->beginInput();
-
+    
+    _guiManager->SetElapsedTime(_frameTime);
     _cameraControl->Run();
 }
 

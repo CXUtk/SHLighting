@@ -206,13 +206,40 @@ void Renderer::DrawTrianglesSH(const std::vector<DrawTriangle>& triangles) {
         -0.001103, -0.000948, 0.003537, -0.008186,
         -0.002904, 0.013175, -0.008186, 0.054869
         );
+
+    glm::mat4 RMat1 = glm::mat4(
+        0.290985, -0.152321, 0.766757, -0.476878,
+        -0.152321, -0.290985, -0.358529, 0.643773,
+        0.766757, -0.358529, -0.368936, -0.554191,
+        -0.476878, 0.643773, -0.554191, 2.352936
+        );
+    glm::mat4 GMat1 = glm::mat4(
+        -0.074723, -0.069243, 0.292131, -0.089636,
+        -0.069243, 0.074723, -0.305810, 0.569946,
+        0.292131, -0.305810, -0.223961, -0.296503,
+        -0.089636, 0.569946, -0.296503, 1.306389
+        );
+    glm::mat4 BMat1 = glm::mat4(
+        -0.417158, -0.167276, 0.188758, 0.016888,
+        -0.167276, 0.417158, -0.650106, 0.987418,
+        0.188758, -0.650106, -0.349077, -0.439052,
+        0.016888, 0.987418, -0.439052, 1.644526
+        );
     auto shader = _shaderManager->getShaderData("triangle_draw_SH");
     shader->apply();
     glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"), 1, false, glm::value_ptr(_projectionMatrix * _viewMatrix));
     glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, false, glm::value_ptr(model));
-    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "RMat"), 1, false, glm::value_ptr(RMat));
-    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "GMat"), 1, false, glm::value_ptr(GMat));
-    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "BMat"), 1, false, glm::value_ptr(BMat));
+
+    for (int i = 1; i <= 4; i++) {
+        glUniformMatrix4fv(glGetUniformLocation(shader->getID(), ("SH" + std::to_string(i) + ".RMat").c_str()), 1, false, glm::value_ptr(RMat));
+        glUniformMatrix4fv(glGetUniformLocation(shader->getID(), ("SH" + std::to_string(i) + ".GMat").c_str()), 1, false, glm::value_ptr(GMat));
+        glUniformMatrix4fv(glGetUniformLocation(shader->getID(), ("SH" + std::to_string(i) + ".BMat").c_str()), 1, false, glm::value_ptr(BMat));
+    }
+    for (int i = 5; i <= 8; i++) {
+        glUniformMatrix4fv(glGetUniformLocation(shader->getID(), ("SH" + std::to_string(i) + ".RMat").c_str()), 1, false, glm::value_ptr(RMat1 * 0.1f));
+        glUniformMatrix4fv(glGetUniformLocation(shader->getID(), ("SH" + std::to_string(i) + ".GMat").c_str()), 1, false, glm::value_ptr(GMat1 * 0.1f));
+        glUniformMatrix4fv(glGetUniformLocation(shader->getID(), ("SH" + std::to_string(i) + ".BMat").c_str()), 1, false, glm::value_ptr(BMat1 * 0.1f));
+    }
 
     glBindVertexArray(_vaoTriangle);
 
